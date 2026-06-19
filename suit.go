@@ -10,19 +10,43 @@ const (
 	Spades
 	Red
 	Black
+	Wands
+	Cups
+	Swords
+	Pentacles
+	MajorArcana
 )
 
-func (s Suit) LaTeX() string {
+// LaTeX returns the LaTeX command that will print the symbol for this card's suit.
+// For the standard deck of playing cards, the commands should work fine in base LaTeX. For the Tarot suits,
+// however, the following packages will need to be included:
+//   - esrelation
+//   - fourier
+//   - linearb
+//   - MnSymbol
+func (s Suit) LaTeX() []byte {
+	var suitCmd string
+
 	switch s {
 	case Hearts:
-		return `$\heartsuit$`
+		suitCmd = `$\heartsuit$`
 	case Clubs:
-		return `$\clubsuit$`
+		suitCmd = `$\clubsuit$`
 	case Diamonds:
-		return `$\diamondsuit$`
+		suitCmd = `$\diamondsuit$`
 	case Spades:
-		return `$\spadesuit$`
+		suitCmd = `$\spadesuit$`
+	case Wands:
+		suitCmd = `\restrictwand`
+	case Cups:
+		suitCmd = `\BPcup`
+	case Swords:
+		suitCmd = `\textxswup`
+	case Pentacles:
+		suitCmd = `\pentagram`
 	default:
-		return ""
+		suitCmd = ""
 	}
+
+	return []byte(suitCmd)
 }

@@ -19,6 +19,7 @@ const (
 	Nine
 	Ten
 	Jack
+	Knight
 	Queen
 	King
 )
@@ -31,6 +32,8 @@ func (r Rank) String() string {
 		return "A"
 	case Jack:
 		return "J"
+	case Knight:
+		return "C"
 	case Queen:
 		return "Q"
 	case King:
@@ -40,6 +43,6 @@ func (r Rank) String() string {
 	}
 }
 
-func (r Rank) LaTeX() string {
-	return r.String()
+func (r Rank) LaTeX() []byte {
+	return []byte(r.String())
 }

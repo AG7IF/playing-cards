@@ -1,14 +1,16 @@
 package playing_cards
 
-import (
-	"fmt"
-)
-
 type Card struct {
 	Suit Suit
 	Rank Rank
+	Name string
 }
 
-func (c Card) LaTeX() string {
-	return fmt.Sprintf("%s%s", c.Rank.LaTeX(), c.Suit.LaTeX())
+func (c Card) LaTeX() []byte {
+	var card []byte
+
+	card = c.Rank.LaTeX()
+	card = append(card, c.Suit.LaTeX()...)
+
+	return card
 }
