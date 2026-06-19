@@ -1,8 +1,14 @@
 package playing_cards
 
+import (
+	"math/rand/v2"
+
+	"github.com/pkg/errors"
+)
+
 type Deck []Card
 
-var newDeck = []Card{
+var newDeckOrder = []Card{
 	{Suit: Hearts, Rank: Ace},
 	{Suit: Hearts, Rank: Duce},
 	{Suit: Hearts, Rank: Three},
@@ -63,12 +69,76 @@ var newDeck = []Card{
 	{Suit: Red, Rank: Joker},
 }
 
-func NewDeck() Deck {
-	var d Deck
+func NewDeck() *Deck {
+	return NewDeckFromCards(newDeckOrder...)
+}
 
-	for _, c := range newDeck {
+func NewDeckFromCards(cards ...Card) *Deck {
+	var d Deck
+	for _, c := range cards {
 		d = append(d, c)
 	}
 
-	return d
+	return &d
+}
+
+func CombineDecks(decks ...*Deck) *Deck {
+	d := make(Deck, 0)
+
+	d.Append(decks[0])
+
+	for i := 1; i < len(decks); i++ {
+		d.Append(decks[i])
+	}
+
+	return &d
+}
+
+func (d *Deck) Append(c *Deck) {
+	*d = append(*d, *c...)
+}
+
+func (d *Deck) Cut(idx int) ([]*Deck, error) {
+	if idx < 0 || idx > d.Len() {
+		return nil, errors.Errorf("attempt to cut %d cards from a deck of %d", idx, d.Len())
+	}
+
+	firstCutCards, _ := d.DealFromTop(idx)
+	firstCut := NewDeckFromCards(firstCutCards...)
+
+	return []*Deck{firstCut, d}, nil
+}
+
+func (d *Deck) DealFromTop(count int) ([]Card, error) {
+	if count < 0 || count > d.Len() {
+		return nil, errors.Errorf("attempt to deal %d cards from a deck of %d", count, d.Len())
+	}
+
+	dealt := (*d)[:count]
+
+	*d = (*d)[count:]
+
+	return dealt, nil
+}
+
+func (d *Deck) DealFromBottom(count int) ([]Card, error) {
+	if count < 0 || count > d.Len() {
+		return nil, errors.Errorf("attempt to deal %d cards from a deck of %d", count, d.Len())
+	}
+
+	dealt := (*d)[d.Len()-count:]
+
+	*d = (*d)[:d.Len()-count]
+
+	return dealt, nil
+}
+
+func (d *Deck) Len() int {
+	return len(*d)
+}
+
+func (d *Deck) Shuffle() {
+	rand.Shuffle(d.Len(), func(i, j int) {
+		(*d)[i], (*d)[j] = (*d)[j], (*d)[i]
+	})
 }
